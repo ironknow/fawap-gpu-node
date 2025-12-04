@@ -173,6 +173,45 @@ docker run --gpus all -p 8080:8080 gpu-node
 
 ---
 
+## 📦 Publishing to Docker Hub
+
+### Prerequisites
+
+1. **Login to Docker Hub**
+   ```bash
+   docker login
+   ```
+   Enter your Docker Hub username and password when prompted.
+
+2. **Set Docker Hub Username**
+   ```bash
+   export DOCKERHUB_USERNAME=your-username
+   ```
+
+### Building and Pushing (Automated)
+
+Use the provided script for easy building and pushing:
+
+```bash
+# Make script executable (if not already)
+chmod +x build-and-push.sh
+
+# Build and push with version
+./build-and-push.sh 1.0.0
+```
+
+The script will:
+1. Validate the version format
+2. Build the Docker image with all tags
+3. Prompt for confirmation before pushing
+4. Push all tags to Docker Hub
+
+**Interactive mode** (if version not provided):
+```bash
+./build-and-push.sh
+# Script will prompt for version number
+```
+
 ## 🚀 Deployment
 
 The GPU Node is usually deployed on:

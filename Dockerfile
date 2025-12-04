@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     python3.10 \
     python3-pip \
     python3-dev \
+    python3.10-venv \
     libgl1-mesa-glx \
     libglib2.0-0 \
     libsm6 \
@@ -33,12 +34,17 @@ RUN apt-get update && apt-get install -y \
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
+# Create and activate virtual environment
+# This avoids pip root user warnings and provides better isolation
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
 # Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install Python dependencies
-RUN pip3 install --upgrade pip && \
-    pip3 install -r requirements.txt
+# Install Python dependencies in virtual environment
+RUN pip install --upgrade pip --no-cache-dir && \
+    pip install -r requirements.txt --no-cache-dir
 
 # Copy application code
 COPY src/ /app/src/
@@ -59,6 +65,6 @@ ENV MODEL_PATH=/app/models
 ENV MODEL_TYPE=insightface
 ENV GPU_ID=0
 
-# Run the application
-CMD ["python3", "-m", "src.main"]
+# Run the application (venv python is already in PATH)
+CMD ["python", "-m", "src.main"]
 
