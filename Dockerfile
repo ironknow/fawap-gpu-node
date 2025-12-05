@@ -28,6 +28,8 @@ RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     make \
+    wget \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Python path
@@ -50,6 +52,10 @@ RUN pip install --upgrade pip --no-cache-dir && \
 COPY src/ /app/src/
 COPY models/ /app/models/
 
+# Copy download script
+COPY scripts/download_models.sh /app/scripts/download_models.sh
+RUN chmod +x /app/scripts/download_models.sh
+
 # Create models directory if it doesn't exist
 RUN mkdir -p /app/models
 
@@ -66,5 +72,6 @@ ENV MODEL_TYPE=insightface
 ENV GPU_ID=0
 
 # Run the application (venv python is already in PATH)
-CMD ["python", "-m", "src.main"]
+# Download models before starting the application
+CMD ["bash", "-c", "/app/scripts/download_models.sh && python -m src.main"]
 
